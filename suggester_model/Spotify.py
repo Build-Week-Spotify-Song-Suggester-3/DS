@@ -137,8 +137,9 @@ def get_all_data(input_string):
         albums_names.append(track['album']['name'])
     final_df['album'] = albums_names
 
+    final_df = dict(final_df)
 
-    return dict(final_df)
+    return final_df
 
 
 
