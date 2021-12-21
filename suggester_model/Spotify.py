@@ -26,10 +26,10 @@ def get_30_tracks(input_track_uri):
     # 10 Spotify suggestions base on input song genre and artist '''
 
     # Get track info from API with uri                                                                           
-    track_info = spotify.track(input_track_uri)
+    input_track_info = spotify.track(input_track_uri)
 
     # Get artist URI from track info
-    artist_uri = track_info['artists'][0]['uri']
+    artist_uri = input_track_info['artists'][0]['uri']
 
     # Get artist info from API with artist URI
     artist_info = spotify.artist(artist_uri)
@@ -61,7 +61,7 @@ def get_30_tracks(input_track_uri):
     spotify_suggested_10 = suggested_list['tracks'][:10]
 
     # Joining the lists of 10 songs
-    gathered_30 = input_artist_top_10 + related_artists_10 + spotify_suggested_10
+    gathered_30 = [input_track_info] + input_artist_top_10 + related_artists_10 + spotify_suggested_10
 
     return gathered_30
 
@@ -79,7 +79,6 @@ def analize_tracks(gathered_tracks):
     gathered_30_analisis = spotify.audio_features(all_tracks_ids)
     
     return gathered_30_analisis
-
 
 def get_all_data(input_string):
     '''Takes an user input string search for a matching song
@@ -102,12 +101,12 @@ def get_all_data(input_string):
 
     features_data = pd.DataFrame(
         gathered_30_analisis,
-        columns=['id','danceability', 'energy', 'key', 'loudness',
+        columns=['danceability', 'energy', 'key', 'loudness',
                 'mode', 'speechiness', 'acousticness','instrumentalness',
                 'liveness', 'valence', 'tempo', 'duration_ms']
                 )
 
-    final_df = pd.merge(general_data, features_data, on='id')
+    final_df = pd.concat([general_data, features_data], axis=1 )
 
 
     # CLEANING STRINGS FROM UNWANTED CHARACTERS
@@ -127,17 +126,16 @@ def get_all_data(input_string):
 
     # Artists column
     artists_names = []
-    for track in gathered_30:
-        artists_names.append(track['artists'][0]['name'])
+    for i in range(31):
+        artists_names.append(final_df['artists'][i][0]['name'])
     final_df['artists'] = artists_names
 
     # Album Column
     albums_names = []
-    for track in gathered_30:
-        albums_names.append(track['album']['name'])
+    for i in range(31):
+        albums_names.append(final_df['album'][i]['name'])
     final_df['album'] = albums_names
 
-    final_df = dict(final_df)
 
     return final_df
 
