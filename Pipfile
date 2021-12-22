@@ -11,7 +11,7 @@ spotipy = "*"
 scikit-learn = "*"
 sklearn = "*"
 pandas = "*"
-
+gunicorn = "*"
 [dev-packages]
 
 [requires]
