@@ -1,7 +1,7 @@
 import pandas as pd
 import spotipy
 from flask import Flask, render_template, request
-from .Spotify import get_all_data
+from .Spotify import get_suggestions
 from os import getenv
 
 
@@ -13,9 +13,6 @@ def create_app():
     # Database configurations
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False # Turn off verification when we request changes to db
     app.config["SQLALCHEMY_DATABASE_URI"] = getenv('DATABASE_URI')
-
-    # Give our APP access to our database
-    DB.init_app(app)
 
     # Listen to a "route"
     # Make our "Home" "root" route. '/' is the home page route
@@ -42,25 +39,17 @@ def create_app():
     #     return render_template('index.html',title="Related songs search is complete")
 
     
-    # @app.route('/suggestions', methods=['POST'])
-    # def suggestions():
-    #     #user0, user1 = sorted([request.values['user0'], request.values['user1']])
+    @app.route('/suggestions', methods=['POST'])
+    def suggestions():
+        user_input = request.values['user_input_song']
+        suggestions = get_suggestions(user_input)
+        suggestions = suggestions.reset_index(drop=True)
 
-    #     # if user0 == user1:
-    #     #     message = 'Cannot compare a user to themselves!'
-    #     # else:
-    #     #     tweet_text = request.values['tweet_text']
-    #     #     prediction = predict_user(user0, user1, tweet_text)
-    #     #     if prediction == 0:
-    #     #         predicted_user = user0
-    #     #         non_predicted_user = user1
-    #     #     else:
-    #     #         predicted_user = user1
-    #     #         non_predicted_user = user0
+        dicts_list = []
+        for i in range(len(suggestions)):
+            dicts_list.append(dict(suggestions.iloc[i]))
 
-    #     #     message = f'"{tweet_text}" is more likely to be said by {predicted_user} than {non_predicted_user}'
-
-    #     return render_template('index.html',title="5 Suggestions")
+        return render_template('suggestions.html',title='Results', suggestions=dicts_list)
 
 
 

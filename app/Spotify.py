@@ -80,7 +80,7 @@ def analize_tracks(gathered_tracks):
     
     return gathered_30_analisis
 
-def get_all_data(input_string):
+def get_suggestions(input_string):
     '''Takes an user input string search for a matching song
     in the Spotify API and return a dictionary with
     gathered information about 30 posible suggestions
@@ -96,7 +96,7 @@ def get_all_data(input_string):
     # Creating dfs (Preparing to Merge gathered information)
     general_data = pd.DataFrame(
         gathered_30,
-        columns=['id','uri', 'artists','album','name','popularity']
+        columns=['id','uri', 'external_urls', 'artists','album','name','popularity']
         )
     #droping user song from general_data df
     general_data = general_data[1:].reset_index(drop=True)
@@ -156,10 +156,16 @@ def get_all_data(input_string):
         albums_names.append(final_df['album'][i]['name'])
     final_df['album'] = albums_names
 
+    # remove parenthesis and all inside them
+    final_df['album'] = final_df['album'].str.replace(r" \(.*\)","")
+
     # Eliminating user song if is inside the results
     final_df = final_df[final_df['uri'] != input_song_uri]
 
-    return final_df[['name','artists', 'album', 'popularity', 'uri']].head()
+    # Getting URLs
+    final_df['external_urls'] = [url['spotify'] for url in final_df['external_urls']]
+
+    return final_df[['name', 'artists', 'uri', 'external_urls']].head()
 
 
 
