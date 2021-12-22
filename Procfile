@@ -1,1 +1,1 @@
-web: gunicorn spotify:APP 0.0.0.0:$PORT
+web: gunicorn app:APP 0.0.0.0:$PORT
