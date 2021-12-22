@@ -1,0 +1,1 @@
+pip install pandas, os, spotipy, spotipy.oauth2, sklearn
