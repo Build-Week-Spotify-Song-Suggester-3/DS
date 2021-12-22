@@ -1,11 +1,11 @@
+from sklearn.neighbors import NearestNeighbors
 import spotipy
 from spotipy.oauth2 import SpotifyClientCredentials
 from os import getenv
 import pandas as pd
 
-# User gives an spotify URL of one song
 
-
+# Connects to Spotify API
 spotify = spotipy.Spotify(
     client_credentials_manager=SpotifyClientCredentials(
         getenv('CLIENT_ID'), 
@@ -61,7 +61,7 @@ def get_30_tracks(input_track_uri):
     spotify_suggested_10 = suggested_list['tracks'][:10]
 
     # Joining the lists of 10 songs
-    gathered_30 = [input_track_info] + input_artist_top_10 + related_artists_10 + spotify_suggested_10
+    gathered_30 = [input_track_info] + related_artists_10 + spotify_suggested_10 + input_artist_top_10
 
     return gathered_30
 
@@ -98,16 +98,36 @@ def get_all_data(input_string):
         gathered_30,
         columns=['id','uri', 'artists','album','name','popularity']
         )
+    #droping user song from general_data df
+    general_data = general_data[1:].reset_index(drop=True)
 
     features_data = pd.DataFrame(
         gathered_30_analisis,
-        columns=['danceability', 'energy', 'key', 'loudness',
-                'mode', 'speechiness', 'acousticness','instrumentalness',
-                'liveness', 'valence', 'tempo', 'duration_ms']
+        columns=['acousticness', 'danceability', 'energy',
+       'instrumentalness', 'liveness', 'speechiness', 'valence']
                 )
+    
+    # Praparing data to fit Model
+    user_song = features_data[:1]
+    
+    gathered_songs = features_data[1:].reset_index(drop=True)
 
-    final_df = pd.concat([general_data, features_data], axis=1 )
+    # Instantiate NN Model
+    neigh = NearestNeighbors(n_neighbors=2, radius=0.4)
+    # Fit Nearest Neigbors Model
+    nn = neigh.fit(gathered_songs)
+    
+    # Finding nearest neighbors to the user song
+    distances, indexes = nn.kneighbors(X=user_song, n_neighbors=30, return_distance=True)
+    # Preparing results to join general data
+    results_df = pd.DataFrame({'model_distances':list(distances[0]), 'id':list(indexes[0])})
 
+    # Joining Data
+    gathered_results = gathered_songs.join(results_df).set_index('id', drop=True)
+    # Reorder base on distances
+    gathered_sorted = gathered_results.sort_values('model_distances')
+
+    final_df = gathered_sorted.join(general_data)
 
     # CLEANING STRINGS FROM UNWANTED CHARACTERS
 
@@ -126,18 +146,20 @@ def get_all_data(input_string):
 
     # Artists column
     artists_names = []
-    for i in range(31):
+    for i in range(30):
         artists_names.append(final_df['artists'][i][0]['name'])
     final_df['artists'] = artists_names
 
     # Album Column
     albums_names = []
-    for i in range(31):
+    for i in range(30):
         albums_names.append(final_df['album'][i]['name'])
     final_df['album'] = albums_names
 
+    # Eliminating user song if is inside the results
+    final_df = final_df[final_df['uri'] != input_song_uri]
 
-    return final_df
+    return final_df[['name','artists', 'album', 'popularity', 'uri']].head()
 
 
 
