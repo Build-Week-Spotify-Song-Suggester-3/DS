@@ -10,6 +10,7 @@ flask-sqlalchemy = "*"
 spotipy = "*"
 sklearn = "*"
 pandas = "*"
+gunicorn = "*"
 
 [dev-packages]
 
