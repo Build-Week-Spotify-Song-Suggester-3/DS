@@ -4,7 +4,7 @@ The Song Suggester App Takes a song's reference (name, artist) provided by the u
 
 
 ### Heroku API
-[Deployed URL:]()
+[Deployed URL:](https://s-suggester.herokuapp.com)
 
 ### Meet the Team
 
