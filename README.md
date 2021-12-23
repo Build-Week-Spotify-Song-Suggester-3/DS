@@ -21,7 +21,7 @@ DS-32
 **German Parra**
 *DS-33*
 [Github:](https://github.com/GermanParra)
-[LinkedIn:] 
+[LinkedIn:](https://www.linkedin.com/in/germanparrads/)
 
 **Matt Grohnke**
 *DS-33*
