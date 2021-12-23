@@ -127,7 +127,7 @@ def get_suggestions(input_string):
     # Reorder base on distances
     gathered_sorted = gathered_results.sort_values('model_distances')
 
-    final_df = gathered_sorted.join(general_data)
+    final_df = gathered_sorted.join(general_data).reset_index(drop=True)
 
     # CLEANING STRINGS FROM UNWANTED CHARACTERS
 

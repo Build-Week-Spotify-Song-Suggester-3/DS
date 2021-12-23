@@ -20,21 +20,23 @@
 						
 								<div class="col-6 col-12-xsmall">
                                     <header>
-                                        <h2>What's your favorite song ever?</h2>
+                                        <h2>Your Suggestions are Ready!.</h2>
                                     </header>
-							  		<label for="state_changed_at_month">Give us a song name and artist to get you some recomendations.</label>
+							  		<label for="state_changed_at_month">Introduce another song to get new recomendations.</label>
 
 									  <form action="/suggestions" method="post">
 										<input type="text" name="user_input_song" placeholder="Name , Artist">
 										<input type="submit" value="Search" href="#first">
+										<ul class="actions">
+											<strong><p>Follow the arrow to see your results.</p></strong><br>
+											<li><a href="#first" class="arrow scrolly"><span class="label">Next</span></a></li>
+										</ul>
 									  </form>
-                                      <strong><p>Follow the arrow to see your results.</p></strong>
+                                    
 
 								</div>
                                 
-							<ul class="actions">
-								<li><a href="#first" class="arrow scrolly"><span class="label">Next</span></a></li>
-							</ul>
+
 						</header>
 						<div class="content">
 							<span class="image fill" data-position="center"><img src="static/images/pic01.jpg" alt="" /></span>
@@ -49,6 +51,7 @@
 						<div class="content">
 							<p><strong>{% block content %}
                                 <div id="user-info">
+									<strong><p>Click on the links below every suggestion to play the song on Spotify app or web site.</p></strong>
                                     <p>{% for song in suggestions %}
                                         {{ song.name, song.artists}}<br>
                                         <a href={{song.uri}}>Spotify app</a><br>
