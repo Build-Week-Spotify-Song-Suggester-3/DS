@@ -165,7 +165,8 @@ def get_suggestions(input_string):
     # Getting URLs
     final_df['external_urls'] = [url['spotify'] for url in final_df['external_urls']]
 
-    return final_df[['name', 'artists', 'uri', 'external_urls']].head()
+    return final_df[['name', 'artists', 'uri', 'external_urls']].head() 
+    
 
 
 
